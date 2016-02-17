@@ -1,0 +1,34 @@
+{
+  "kind": "ImageStreamList",
+  "apiVersion": "v1",
+  "metadata": {},
+  "items": [
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "gitlab-ce",
+	"namespace": "openshift",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "tags": [
+          {
+            "name": "latest",
+            "from": {
+              "kind": "ImageStreamTag",
+              "name": "8.4.4-ce.0"
+            }
+          },
+          {
+            "name": "8.4.4-ce.0",
+            "from": {
+              "kind": "DockerImage",
+              "name": "docker.io/gitlab/gitlab-ce:8.4.4-ce.0"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

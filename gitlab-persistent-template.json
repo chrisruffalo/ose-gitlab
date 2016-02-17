@@ -1,0 +1,135 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "gitlab-persistent",
+    "creationTimestamp": null,
+    "annotations": {
+      "description": "Gitlab with persistent storage",
+      "iconClass": "icon-git",
+      "tags": "instant-app,gitlab"
+    }
+  },
+  "objects": [
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${GITLAB_SERVICE_NAME}",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "web",
+            "protocol": "TCP",
+            "port": 80,
+            "targetPort": 80,
+            "nodePort": 0
+          },
+          {
+            "name": "ssh",
+            "protocol": "TCP",
+            "port": 22,
+            "targetPort": 22,
+            "nodePort": 0
+          }          
+        ],
+        "selector": {
+          "name": "${GITLAB_SERVICE_NAME}"
+        },
+        "portalIP": "",
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${GITLAB_SERVICE_NAME}",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "to": {
+          "kind": "Service",
+          "name": "${GITLAB_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${GITLAB_SERVICE_NAME}",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "gitlab"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "gitlab-ce:latest",
+                "namespace": "openshift"
+              },
+              "lastTriggeredImage": ""
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${GITLAB_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "name": "${GITLAB_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "gitlab",
+                "image": "${GITLAB_IMAGE}",
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent",
+                "capabilities": {},
+                "securityContext": {
+                  "capabilities": {},
+                  "privileged": false
+                }
+              }
+            ],
+            "restartPolicy": "Always",
+            "dnsPolicy": "ClusterFirst"
+          }
+        }
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "GITLAB_SERVICE_NAME",
+      "description": "Gitlab service name",
+      "value": "gitlab"
+    }
+  ],
+  "labels": {
+    "template": "gitlab-persistent-template"
+  }
+}
