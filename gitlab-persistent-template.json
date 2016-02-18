@@ -79,7 +79,7 @@
               ],
               "from": {
                 "kind": "ImageStreamTag",
-                "name": "gitlab-ce:latest",
+                "name": "${GITLAB_IMAGE}",
                 "namespace": "openshift"
               },
               "lastTriggeredImage": ""
@@ -128,6 +128,11 @@
       "description": "Gitlab service name",
       "value": "gitlab",
       "required": true
+    },
+    {
+      "name": "GITLAB_IMAGE",
+      "description": "The GitLab (CE) image stream tag to use (if in doubt, use the default 'gitlab-ce:latest')",
+      "value": "gitlab-ce:latest"
     }
   ],
   "labels": {

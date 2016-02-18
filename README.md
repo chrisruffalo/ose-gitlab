@@ -116,11 +116,11 @@ Now using project "${your project}" on server "https://${master domain}:8443".
 $ oc new-app gitlab-persistent --param GITLAB_SERVICE_NAME=${gitlab instance name},GITLAB_EXTERNAL_SSH_PORT=${gitlab external ssh port}
 --> Deploying template gitlab-persistent in project openshift for "gitlab-persistent"
      With parameters:
-      GITLAB_SERVICE_NAME=gitlab
+      GITLAB_SERVICE_NAME=${gitlab instance name}
 --> Creating resources ...
-    Service "gitlab" created
-    Route "gitlab" created
-    DeploymentConfig "gitlab" created
+    Service "${gitlab instance name}" created
+    Route "${gitlab instance name}" created
+    DeploymentConfig "${gitlab instance name}" created
 --> Success
     Run 'oc status' to view your app.
 ```
@@ -128,9 +128,9 @@ $ oc new-app gitlab-persistent --param GITLAB_SERVICE_NAME=${gitlab instance nam
 ### Attaching NFS Volumes
 This step will attach NFS volumes from your NFS server's mount point. The `nfs server` variable should be the hostname of your NFS server. The paths in the "source" block are based on what was used in the earlier step that created the NFS mount points.
 ```
-$ oc volume dc/gitlab --add --name=gitlab-data --mount-path=/var/opt/gitlab --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/gitlab/data"}}'
-$ oc volume dc/gitlab --add --name=gitlab-logs --mount-path=/var/log/gitlab --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/gitlab/logs"}}'
-$ oc volume dc/gitlab --add --name=gitlab-config --mount-path=/etc/gitlab --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/gitlab/config"}}'
+$ oc volume dc/${gitlab instance name} --add --name=${gitlab instance name}-data --mount-path=/var/opt/gitlab --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/gitlab/data"}}'
+$ oc volume dc/${gitlab instance name} --add --name=${gitlab instance name}-logs --mount-path=/var/log/gitlab --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/gitlab/logs"}}'
+$ oc volume dc/${gitlab instance name} --add --name=${gitlab instance name}-config --mount-path=/etc/gitlab --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/gitlab/config"}}'
 ```
 Each time you modify the deployment config (`dc`) a new deployment will be created. After the third volume is added it should stabilize and begin the deployment in earnest.
 
