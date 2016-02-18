@@ -138,7 +138,7 @@ The most important field to edit is `external_url` to change that to match the e
 
 Restarting GitLab is pretty easy. The simplest way is to delete the currently running pod and then just let OSE (the replication controller, anyway) restart it.
 
-## Ports and SSH
+## Ports and SSH (**WORK IN PROGRESS**)
 If you want to get SSH working you will need to make a few edits. The first, in the `gitlab.rb` is to make sure that the SSH host and port are set correctly. 
 
 ```
