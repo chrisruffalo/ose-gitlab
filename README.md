@@ -7,9 +7,13 @@
 ## Variables
 Used in this guide are several variables (identified by `code` formatting and by the `${` and `}` tokens). When encountered in this guide you should recognize that these values should be changd specific to your local environment.
 
+* `gitlab instance name` = the name of the gitlab instance you will be running (default: 'gitlab')
+* `gitlab external ssh port` = the port that will be available for external SSH access (default: '32222')
+* `external hostname` = the hostname that your gitlab address will be externally accessible from (usually relative to your OpenShift 'cloud domain').
 * `your user name` = the name of the user that you are logging into the Web UI or the `oc` command with.
 * `your project` = the project namespace that your GitLab application will reside under in OSE. Not to be confused with the "openshift" and "default" namespaces.
 * `nfs server` = the fqdn, accesible from internal to your OSE instance, of the NFS server you are using to store shared information.
+
 
 ## Fundamentals
 The purpose of this repository is to explain how to get [GitLab CE](https://about.gitlab.com/) running on [OpenShift Enterprise 3](https://www.openshift.com/enterprise/). This guide makes use of some basic OSE concepts and uses the [official GitLab CE](https://hub.docker.com/r/gitlab/gitlab-ce/) docker image. 
@@ -35,7 +39,8 @@ This guide consists of the following steps
 * Modify your SCC so that GitLab can run
 * Create the GitLab deployment
 * Attach NFS volumes directly to the created deployment configuration
-* Finishing Up
+* Configuring Gitlab
+* Configuring SSH Access
 
 ### Clone the `gitlab-ose` Repository
 On a host that has the `oc` command for OSE installed:
@@ -108,7 +113,7 @@ You can also produce the same effect by creating a new application within your p
 $ oc project ${your project}
 Now using project "${your project}" on server "https://${master domain}:8443".
 
-$ oc oc new-app gitlab-persistent
+$ oc new-app gitlab-persistent --param GITLAB_SERVICE_NAME=${gitlab instance name},GITLAB_EXTERNAL_SSH_PORT=${gitlab external ssh port}
 --> Deploying template gitlab-persistent in project openshift for "gitlab-persistent"
      With parameters:
       GITLAB_SERVICE_NAME=gitlab
@@ -129,7 +134,7 @@ $ oc volume dc/gitlab --add --name=gitlab-config --mount-path=/etc/gitlab --sour
 ```
 Each time you modify the deployment config (`dc`) a new deployment will be created. After the third volume is added it should stabilize and begin the deployment in earnest.
 
-### Finishing Up
+### Configuring GitLab
 Now GitLab CE is running and you can finish up your configuration **mainly** in the same way that is suggested by the [GitLab documentation](http://doc.gitlab.com/omnibus/docker/README.html). Instead of using the command in the documentation to login to the container you will need to execute the bash command on the OSE pod with `oc exec -ti gitlab-X-#### /bin/bash`. (Where X is the deploy number and #### is the unique pod ID.) Once you are inside the pod you can configure the application normally.
 
 You can also edit `/opt/nfs/ose/gitlab/config/gitlab.rb` as normal.
@@ -138,28 +143,14 @@ The most important field to edit is `external_url` to change that to match the e
 
 Restarting GitLab is pretty easy. The simplest way is to delete the currently running pod and then just let OSE (the replication controller, anyway) restart it.
 
-## Ports and SSH (**WORK IN PROGRESS**)
-If you want to get SSH working you will need to make a few edits. The first, in the `gitlab.rb` is to make sure that the SSH host and port are set correctly. 
+### Configuring SSH Access
+If you want to get SSH working you will need to edit `gitlab.rb` is to make sure that the SSH host and port are set correctly. 
 
 ```
-gitlab_rails['gitlab_shell_ssh_port'] = 32222
-gitlab_rails['gitlab_ssh_host'] = 'git.cloud.ruffalo.org'
+gitlab_rails['gitlab_shell_ssh_port'] = ${gitlab external ssh port}
+gitlab_rails['gitlab_ssh_host'] = '${external hostname}'
 ```
 **Note:** setting the 'gitlab_shell_ssh_port' *does not* modify what port SSH/gitlab_shell runs on within the container. It simply changes the port that is shown in the GitLab UI.
-
-The port is the port that we will use later to make a service entry for passing information from any node to the GitLab instance. The SSH host can be the DNS entry for any host in your node cluster.
-
-Next you will need to import the `NodePort` service entry for GitLab to expose port `32222` to the outside world.
-```
-$ oc project ${your project}
-Now using project "${your project}" on server "https://${master domain}:8443".
-
-$ oc create -f gitlab-direct-ssh-port.yaml
-```
-
-This will open a port on each of the nodes that will connect the external port (`32222`) to the internal service port for GitLab (`22`). After this is complete you will need to open your firewall and allow traffic to enter the node.
-
-More information about [NodePort can be found here](https://github.com/kubernetes/kubernetes/blob/master/docs/user-guide/services.md#type-nodeport).
 
 ## Troubleshooting
 The main problems that you will have during this process are issues with privileged containers and permissions and issues because OSE puts a lot of distance between the user and the docker container.
