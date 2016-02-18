@@ -152,5 +152,16 @@ gitlab_rails['gitlab_ssh_host'] = '${external hostname}'
 ```
 **Note:** setting the 'gitlab_shell_ssh_port' *does not* modify what port SSH/gitlab_shell runs on within the container. It simply changes the port that is shown in the GitLab UI.
 
+Once you have completed this configuration step and you have restarted the GitLab pod (by deleting the pod and letting it restart) you can import the direct SSH service that will connect the outside world directly to your running pod.
+
+**Before importing** the `gitlab-direct-ssh-service.json` file you should copy it and modify it. You will need to replace the token `${GITLAB_SERVICE_NAME}` with your `gitlab instance name` and `${GITLAB_EXTERNAL_SSH_PORT}` with the `gitlab external ssh port` you chose earlier. Name this file something like `my-gitlab-direct-ssh-service.json`.
+
+```
+$ oc project ${your project}
+Now using project "${your project}" on server "https://${master domain}:8443".
+
+$ oc create -f my-gitlab-direct-ssh-service.json
+```
+
 ## Troubleshooting
 The main problems that you will have during this process are issues with privileged containers and permissions and issues because OSE puts a lot of distance between the user and the docker container.

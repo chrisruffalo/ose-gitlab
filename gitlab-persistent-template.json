@@ -43,29 +43,6 @@
         "sessionAffinity": "None"
       }
     },
-  {
-      "kind": "Service",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${GITLAB_SERVICE_NAME}-ssh",
-        "creationTimestamp": null
-      },
-      "spec": {
-        "ports": [
-          {
-            "name": "ssh",
-            "protocol": "TCP",
-            "port": 32222,
-            "targetPort": 22,
-            "nodePort": 32222
-          },
-        ],
-        "selector": {
-          "name": "${GITLAB_SERVICE_NAME}"
-        },
-        "type": "NodePort",
-      }
-    },    
     {
       "kind": "Route",
       "apiVersion": "v1",
@@ -149,13 +126,9 @@
     {
       "name": "GITLAB_SERVICE_NAME",
       "description": "Gitlab service name",
-      "value": "gitlab"
-    },
-    {
-      "name": "GITLAB_EXTERNAL_SSH_PORT",
-      "description": "The external port that will be configured for GitLab SSH access",
-      "value": "32222"
-    },    
+      "value": "gitlab",
+      "required": true
+    }
   ],
   "labels": {
     "template": "gitlab-persistent-template"
