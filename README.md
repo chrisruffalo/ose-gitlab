@@ -4,6 +4,13 @@
 ## Prerequisites
 * OpenShift Enterprise 3.1.1
 
+## Variables
+Used in this guide are several variables (identified by `code` formatting and by the `${` and `}` tokens). When encountered in this guide you should recognize that these values should be changd specific to your local environment.
+
+* `your user name` = the name of the user that you are logging into the Web UI or the `oc` command with.
+* `your project` = the project namespace that your GitLab application will reside under in OSE. Not to be confused with the "openshift" and "default" namespaces.
+* `nfs server` = the fqdn, accesible from internal to your OSE instance, of the NFS server you are using to store shared information.
+
 ## Fundamentals
 The purpose of this repository is to explain how to get [GitLab CE](https://about.gitlab.com/) running on [OpenShift Enterprise 3](https://www.openshift.com/enterprise/). This guide makes use of some basic OSE concepts and uses the [official GitLab CE](https://hub.docker.com/r/gitlab/gitlab-ce/) docker image. 
 
