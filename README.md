@@ -159,5 +159,7 @@ $ oc create -f gitlab-direct-ssh-port.yaml
 
 This will open a port on each of the nodes that will connect the external port (`32222`) to the internal service port for GitLab (`22`). After this is complete you will need to open your firewall and allow traffic to enter the node.
 
+More information about [NodePort can be found here](https://github.com/kubernetes/kubernetes/blob/master/docs/user-guide/services.md#type-nodeport).
+
 ## Troubleshooting
 The main problems that you will have during this process are issues with privileged containers and permissions and issues because OSE puts a lot of distance between the user and the docker container.
