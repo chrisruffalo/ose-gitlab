@@ -8,7 +8,7 @@
       "apiVersion": "v1",
       "metadata": {
         "name": "gitlab-ce",
-	"namespace": "openshift",
+	      "namespace": "openshift",
         "creationTimestamp": null
       },
       "spec": {
@@ -24,7 +24,7 @@
             "name": "8.4.4-ce.0",
             "from": {
               "kind": "DockerImage",
-              "name": "docker.io/gitlab/gitlab-ce:8.4.4-ce.0"
+              "name": "docker.io/chrisruffalo/gitlab-ce:latest"
             }
           }
         ]

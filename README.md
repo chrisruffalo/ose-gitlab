@@ -1,5 +1,4 @@
 # GitLab (CE) on OpenShift Enterprise 3
----
 
 ## Prerequisites
 * OpenShift Enterprise 3.1.1
@@ -21,7 +20,7 @@ The purpose of this repository is to explain how to get [GitLab CE](https://abou
 ## Rationale
 There has been a tremendous amount of activity within the "DevOps" and "CICD" communitites that has empowered developers to more quickly build and test applications without requiring increased administrative overhead. Development teams can focus on creating and delivering applications while Operations teams can focus on broader issues than provisioning ephemeral resources.
 
-To further the goal of developer enablement, especially with respect to streamlining development pipelines, it would be a *good thing*^(tm) to host your entire CICD pipeline within your PaaS/Application Hosting/Process Virtualization environment. This guide aims to allow you to host your source control (though GitLab is useful for other things too) within OpenShift Enterprise which already is capable of hosting Jenkins as part of a continuous integration pipeline.
+To further the goal of developer enablement, especially with respect to streamlining development pipelines, it would be a *good thing* to host your entire CICD pipeline within your PaaS/Application Hosting/Process Virtualization environment. This guide aims to allow you to host your source control (though GitLab is useful for other things too) within OpenShift Enterprise which already is capable of hosting Jenkins as part of a continuous integration pipeline.
 
 Future plans include installing [Eclipse Che](https://eclipse.org/che/) so that the development IDE can also be hosted within the cloud. This represents the "perfect storm" of being able to develop anything, anywhere.
 
