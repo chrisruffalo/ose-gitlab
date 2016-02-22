@@ -16,13 +16,6 @@
           {
             "name": "latest",
             "from": {
-              "kind": "ImageStreamTag",
-              "name": "8.4.4-ce.0"
-            }
-          },
-          {
-            "name": "8.4.4-ce.0",
-            "from": {
               "kind": "DockerImage",
               "name": "docker.io/chrisruffalo/gitlab-ce:latest"
             }

@@ -162,5 +162,61 @@ Now using project "${your project}" on server "https://${master domain}:8443".
 $ oc create -f my-gitlab-direct-ssh-service.json
 ```
 
+### Setting up SMTP
+
+If you don't have your own SMTP server it is important to note that the GitLab omnibus install does not include any means to send email. (Not even sendmail or postfix!) In the normal course of things you would simply edit your `gitlab.rb` file (as mentioned in the previous sections) and add SMTP support and be on your way using whatever local SMTP provider you have.
+
+If you **do not** have an SMTP server you can run one inside of OSE! Import the image stream and template for the mailserver (provided [by this project](https://github.com/tomav/docker-mailserver)):
+```
+$ oc create -n openshift -f mailserver-image-stream.json
+$ oc create -n openshift -f mailserver-template.json
+```
+
+You will also need to attach volumes to this storage. Go through the steps to add another 'smtp' data directory like so:
+
+```
+$ mkdir -p /opt/nfs/ose/mailserver/postfix
+$ mkdir -p /opt/nfs/ose/mailserver/spamassassin
+$ chown -R nfsnobody:nfsnobody /opt/nfs/ose/mailserver
+$ chmod -R 775 /opt/nfs/ose/mailserver
+```
+
+Add those to your export file (with the same security caveats) and restart nfs-server.
+
+```
+$ /opt/nfs/ose/gitlab *(rw,no_root_squash,sync)
+```
+
+Start the `mailserver` cartridge through the UI or with the `oc new-app` command. Similar to above the 'MAIL_SERVICE_NAME' parameter will allow you to control the name of the mail server. It isn't as important in this case as it will not be assigned an external route (only an internal service IP/endpoint).
+
+You can now mount the storage to the deployment configuration (replacing 'MAIL_SERVICE_NAME' with the actual value):
+
+```$ oc volume dc/${MAIL_SERVICE_NAME --add --name=${MAIL_SERVICE_NAME}-postfix --mount-path=/tmp/postfix --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/mailserver/postfix"}}'
+$ oc volume dc/${MAIL_SERVICE_NAME} --add --name=${MAIL_SERVICE_NAME}-spamassassin --mount-path=/tmp/spamassassin --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/mailserver/spamassassin"}}'
+```
+
+The next step (for all users) is to configure GitLab through editing the `gitlab.rb` and change the following lines to match your install:
+
+```
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "${MAIL_SERVICE_NAME}.${PROJECT}.svc.cluster.local"
+# gitlab_rails['smtp_port'] = 25
+gitlab_rails['smtp_user_name'] = "${user}@${host name}"
+gitlab_rails['smtp_password'] = "putsomepasswordhere"
+gitlab_rails['smtp_domain'] = "${outbound domain}"
+gitlab_rails['smtp_authentication'] = "login"
+```
+
+Once that is complete you will need to update the users for your postfix install by creating a file in your `/opt/nfs/ose/mailserver/postfix/` directory called `accounts.cf`. The contents of that file are simply the username and password of authorized users. In this case:
+
+```
+${user}@{hostname}|putsomepasswordhere
+```
+
+The `|` character separates the user and the hostname.
+
+Once you have finished these edits you may restart the gitlab and mail services by deleting the current pods and letting them be recreated.
+
+
 ## Troubleshooting
 The main problems that you will have during this process are issues with privileged containers and permissions and issues because OSE puts a lot of distance between the user and the docker container.

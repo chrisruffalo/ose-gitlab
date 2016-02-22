@@ -6,8 +6,8 @@
     "creationTimestamp": null,
     "annotations": {
       "description": "A Postfix-based mailserver for applications hosted in OpenShift",
-      "iconClass": "icon-git",
-      "tags": "instant-app,gitlab"
+      "iconClass": "icon-mail",
+      "tags": "instant-app,mail,postfix"
     }
   },
   "objects": [
@@ -24,7 +24,7 @@
             "name": "smtp",
             "protocol": "TCP",
             "port": 25,
-            "targetPort": 80,
+            "targetPort": 25,
             "nodePort": 0
           }          
         ],
@@ -34,20 +34,6 @@
         "portalIP": "",
         "type": "ClusterIP",
         "sessionAffinity": "None"
-      }
-    },
-    {
-      "kind": "Route",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${MAIL_SERVICE_NAME}",
-        "creationTimestamp": null
-      },
-      "spec": {
-        "to": {
-          "kind": "Service",
-          "name": "${MAIL_SERVICE_NAME}"
-        }
       }
     },
     {
@@ -68,7 +54,7 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "gitlab"
+                "mailserver"
               ],
               "from": {
                 "kind": "ImageStreamTag",
