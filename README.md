@@ -207,6 +207,9 @@ gitlab_rails['smtp_user_name'] = "${user}@${host name}"
 gitlab_rails['smtp_password'] = "putsomepasswordhere"
 gitlab_rails['smtp_domain'] = "${outbound domain}"
 gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_enable_starttls_auto'] = false
+gitlab_rails['smtp_tls'] = false
+gitlab_rails['smtp_openssl_verify_mode'] = 'none'
 ```
 
 Once that is complete you will need to update the users for your postfix install by creating a file in your `/opt/nfs/ose/mailserver/postfix/` directory called `accounts.cf`. The contents of that file are simply the username and password of authorized users. In this case:
