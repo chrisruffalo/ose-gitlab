@@ -167,6 +167,7 @@ $ oc create -f my-gitlab-direct-ssh-service.json
 If you don't have your own SMTP server it is important to note that the GitLab omnibus install does not include any means to send email. (Not even sendmail or postfix!) In the normal course of things you would simply edit your `gitlab.rb` file (as mentioned in the previous sections) and add SMTP support and be on your way using whatever local SMTP provider you have.
 
 If you **do not** have an SMTP server you can run one inside of OSE! Import the image stream and template for the mailserver (provided [by this project](https://github.com/tomav/docker-mailserver)):
+
 ```
 $ oc create -n openshift -f mailserver-image-stream.json
 $ oc create -n openshift -f mailserver-template.json
@@ -191,7 +192,8 @@ Start the `mailserver` cartridge through the UI or with the `oc new-app` command
 
 You can now mount the storage to the deployment configuration (replacing 'MAIL_SERVICE_NAME' with the actual value):
 
-```$ oc volume dc/${MAIL_SERVICE_NAME --add --name=${MAIL_SERVICE_NAME}-postfix --mount-path=/tmp/postfix --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/mailserver/postfix"}}'
+```
+$ oc volume dc/${MAIL_SERVICE_NAME --add --name=${MAIL_SERVICE_NAME}-postfix --mount-path=/tmp/postfix --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/mailserver/postfix"}}'
 $ oc volume dc/${MAIL_SERVICE_NAME} --add --name=${MAIL_SERVICE_NAME}-spamassassin --mount-path=/tmp/spamassassin --source='{"nfs": { "server": "${nfs server}", "path": "/opt/nfs/ose/mailserver/spamassassin"}}'
 ```
 
