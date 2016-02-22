@@ -1,0 +1,134 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "mailserver",
+    "creationTimestamp": null,
+    "annotations": {
+      "description": "A Postfix-based mailserver for applications hosted in OpenShift",
+      "iconClass": "icon-git",
+      "tags": "instant-app,gitlab"
+    }
+  },
+  "objects": [
+  {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${MAIL_SERVICE_NAME}",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "smtp",
+            "protocol": "TCP",
+            "port": 25,
+            "targetPort": 80,
+            "nodePort": 0
+          }          
+        ],
+        "selector": {
+          "name": "${MAIL_SERVICE_NAME}"
+        },
+        "portalIP": "",
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${MAIL_SERVICE_NAME}",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "to": {
+          "kind": "Service",
+          "name": "${MAIL_SERVICE_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${MAIL_SERVICE_NAME}",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "gitlab"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${MAILSERVER_IMAGE}",
+                "namespace": "openshift"
+              },
+              "lastTriggeredImage": ""
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "name": "${MAIL_SERVICE_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "creationTimestamp": null,
+            "labels": {
+              "name": "${MAIL_SERVICE_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "mailserver",
+                "image": "${MAILSERVER_IMAGE}",
+                "resources": {},
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent",
+                "capabilities": {},
+                "securityContext": {
+                  "capabilities": {},
+                  "privileged": true
+                }
+              }
+            ],
+            "restartPolicy": "Always",
+            "dnsPolicy": "ClusterFirst"
+          }
+        }
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "MAIL_SERVICE_NAME",
+      "description": "The service name of the email server. This will make the hostname <service-name>.<project>.svc.cluster.local.",
+      "value": "mail",
+      "required": true
+    },
+    {
+      "name": "MAILSERVER_IMAGE",
+      "description": "The image to use that contains a mailserver. (If in doubt: use 'openshift-mailserver-image:latest'.)",
+      "value": "openshift-mailserver-image:latest"
+    }
+  ],
+  "labels": {
+    "template": "mailserver-persistent-template"
+  }
+}
