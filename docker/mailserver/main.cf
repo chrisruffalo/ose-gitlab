@@ -1,0 +1,11 @@
+# only keep mail for localhost
+mydestination = localhost
+
+# what networks to accept traffic from
+#mynetworks = 127.0.0.0/8 172.0.0.0/8 10.0.0.0/8 192.0.0.0/8
+
+# how to get there (via direct delivery)
+relayhost = 
+
+# listen on all interfaces
+inet_interfaces = all

@@ -110,11 +110,11 @@
     },
     {
       "name": "MAILSERVER_IMAGE",
-      "description": "The image to use that contains a mailserver. (If in doubt: use 'openshift-mailserver-image:latest'.)",
-      "value": "openshift-mailserver-image:latest"
+      "description": "The image to use that contains a mailserver. (If in doubt: use 'openshift-mailserver:latest'.)",
+      "value": "openshift-mailserver:latest"
     }
   ],
   "labels": {
-    "template": "mailserver-persistent-template"
+    "template": "mailserver-persistent"
   }
 }

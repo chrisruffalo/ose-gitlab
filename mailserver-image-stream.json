@@ -7,7 +7,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "openshift-mailserver-image",
+        "name": "openshift-mailserver",
 	      "namespace": "openshift",
         "creationTimestamp": null
       },
@@ -17,7 +17,7 @@
             "name": "latest",
             "from": {
               "kind": "DockerImage",
-              "name": "docker.io/tvial/docker-mailserver:latest"
+              "name": "docker.io/chrisruffalo/mailserver:latest"
             }
           }
         ]
