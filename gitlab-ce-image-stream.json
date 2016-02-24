@@ -17,7 +17,7 @@
             "name": "latest",
             "from": {
               "kind": "DockerImage",
-              "name": "docker.io/chrisruffalo/gitlab-ce:latest"
+              "name": "docker.io/chrisruffalo/gitlab-ce:8.5.1-ce.0"
             }
           }
         ]

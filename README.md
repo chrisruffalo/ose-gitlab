@@ -56,8 +56,9 @@ The GitLab CE docker container uses the mounts [described in the documentation](
 Make the GitLab mount point
 ```
 $ mkdir -p /opt/nfs/ose/gitlab/data
-$ mkdir -p /opt/nfs/ose/gitlab/data
-$ mkdir -p /opt/nfs/ose/gitlab/data
+$ mkdir -p /opt/nfs/ose/gitlab/config
+$ mkdir -p /opt/nfs/ose/gitlab/logs
+$ mkdir -p /opt/nfs/ose/gitlab/logs/reconfigure
 $ chown -R nfsnobody:nfsnobody /opt/nfs/ose/gitlab
 $ chmod -R 775 /opt/nfs/ose/gitlab
 ```

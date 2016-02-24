@@ -1,5 +1,5 @@
 # Start from the base dockerfile image
-FROM gitlab/gitlab-ce:latest
+FROM gitlab/gitlab-ce:8.5.1-ce.0
 
 # maintained by...
 MAINTAINER Chris Ruffalo
