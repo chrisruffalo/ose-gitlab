@@ -71,6 +71,7 @@ The permissions here are broad. You should replace `*` with a pattern that bette
 
 ### Import the GitLab CE Stream
 This will add a GitLab CE image stream to your OSE instance. This will allow your OSE to 'track' the GitLab public images as they are made.
+
 ```
 $ oc create -f gitlab-ce-image-stream.json -n openshift
 ```
@@ -113,7 +114,7 @@ You can also produce the same effect by creating a new application within your p
 $ oc project ${your project}
 Now using project "${your project}" on server "https://${master domain}:8443".
 
-$ oc new-app gitlab-persistent --param GITLAB_SERVICE_NAME=${gitlab instance name},GITLAB_EXTERNAL_SSH_PORT=${gitlab external ssh port}
+$ oc new-app gitlab-persistent --param GITLAB_SERVICE_NAME=${gitlab instance name}
 --> Deploying template gitlab-persistent in project openshift for "gitlab-persistent"
      With parameters:
       GITLAB_SERVICE_NAME=${gitlab instance name}
